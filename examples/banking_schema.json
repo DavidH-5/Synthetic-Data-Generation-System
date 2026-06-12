@@ -1,0 +1,201 @@
+{
+  "description": "Personal banking synthetic data — customers, accounts, and transactions",
+  "seed": 42,
+  "tables": [
+    {
+      "name": "customers",
+      "volume": 1000,
+      "columns": [
+        {
+          "name": "customer_id",
+          "dtype": "uuid",
+          "primary_key": true,
+          "unique": true,
+          "nullable": 0.0,
+          "semantic_hint": "uuid4"
+        },
+        {
+          "name": "first_name",
+          "dtype": "str",
+          "nullable": 0.0,
+          "semantic_hint": "first_name"
+        },
+        {
+          "name": "last_name",
+          "dtype": "str",
+          "nullable": 0.0,
+          "semantic_hint": "last_name"
+        },
+        {
+          "name": "email",
+          "dtype": "str",
+          "nullable": 0.0,
+          "unique": true,
+          "semantic_hint": "email"
+        },
+        {
+          "name": "date_of_birth",
+          "dtype": "date",
+          "nullable": 0.0,
+          "semantic_hint": "date_of_birth"
+        },
+        {
+          "name": "state",
+          "dtype": "str",
+          "nullable": 0.0,
+          "semantic_hint": "state",
+          "distribution": {
+            "type": "choice",
+            "values": ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"],
+            "weights": [0.32, 0.26, 0.20, 0.10, 0.07, 0.02, 0.02, 0.01]
+          }
+        },
+        {
+          "name": "customer_segment",
+          "dtype": "str",
+          "nullable": 0.0,
+          "distribution": {
+            "type": "choice",
+            "values": ["mass_market", "emerging_affluent", "affluent", "private"],
+            "weights": [0.60, 0.25, 0.12, 0.03]
+          }
+        }
+      ]
+    },
+    {
+      "name": "accounts",
+      "volume": 1500,
+      "columns": [
+        {
+          "name": "account_id",
+          "dtype": "uuid",
+          "primary_key": true,
+          "unique": true,
+          "nullable": 0.0,
+          "semantic_hint": "uuid4"
+        },
+        {
+          "name": "customer_id",
+          "dtype": "uuid",
+          "nullable": 0.0,
+          "foreign_key": {
+            "references_table": "customers",
+            "references_column": "customer_id",
+            "cardinality": "1:N"
+          }
+        },
+        {
+          "name": "account_type",
+          "dtype": "str",
+          "nullable": 0.0,
+          "distribution": {
+            "type": "choice",
+            "values": ["transaction", "savings", "term_deposit", "offset"],
+            "weights": [0.45, 0.35, 0.15, 0.05]
+          }
+        },
+        {
+          "name": "balance",
+          "dtype": "float",
+          "nullable": 0.0,
+          "min_value": 0.0,
+          "max_value": 500000.0,
+          "distribution": {
+            "type": "exponential",
+            "scale": 15000.0
+          }
+        },
+        {
+          "name": "opened_date",
+          "dtype": "date",
+          "nullable": 0.0,
+          "semantic_hint": "date_this_decade"
+        },
+        {
+          "name": "is_active",
+          "dtype": "bool",
+          "nullable": 0.0,
+          "distribution": {
+            "type": "choice",
+            "values": [true, false],
+            "weights": [0.92, 0.08]
+          }
+        }
+      ]
+    },
+    {
+      "name": "transactions",
+      "volume": 50000,
+      "columns": [
+        {
+          "name": "transaction_id",
+          "dtype": "uuid",
+          "primary_key": true,
+          "unique": true,
+          "nullable": 0.0,
+          "semantic_hint": "uuid4"
+        },
+        {
+          "name": "account_id",
+          "dtype": "uuid",
+          "nullable": 0.0,
+          "foreign_key": {
+            "references_table": "accounts",
+            "references_column": "account_id",
+            "cardinality": "1:N"
+          }
+        },
+        {
+          "name": "transaction_date",
+          "dtype": "datetime",
+          "nullable": 0.0,
+          "semantic_hint": "date_time_this_year"
+        },
+        {
+          "name": "amount",
+          "dtype": "float",
+          "nullable": 0.0,
+          "distribution": {
+            "type": "normal",
+            "mean": -250.0,
+            "std": 1200.0
+          }
+        },
+        {
+          "name": "transaction_type",
+          "dtype": "str",
+          "nullable": 0.0,
+          "distribution": {
+            "type": "choice",
+            "values": ["debit", "credit", "transfer_in", "transfer_out", "direct_debit", "bpay"],
+            "weights": [0.35, 0.30, 0.12, 0.12, 0.07, 0.04]
+          }
+        },
+        {
+          "name": "merchant_name",
+          "dtype": "str",
+          "nullable": 0.25,
+          "semantic_hint": "company"
+        },
+        {
+          "name": "merchant_category",
+          "dtype": "str",
+          "nullable": 0.25,
+          "distribution": {
+            "type": "choice",
+            "values": [
+              "groceries", "fuel", "dining", "utilities", "salary",
+              "rent", "insurance", "entertainment", "travel", "healthcare"
+            ]
+          }
+        },
+        {
+          "name": "description",
+          "dtype": "str",
+          "nullable": 0.10,
+          "semantic_hint": "sentence"
+        }
+      ]
+    }
+  ]
+}

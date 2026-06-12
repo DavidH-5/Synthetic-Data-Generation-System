@@ -1,0 +1,6 @@
+# env file
+.env
+__pycache__/
+.venv/
+output.db
+.sqlite_db/
